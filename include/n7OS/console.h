@@ -2,6 +2,7 @@
 #define __CONSOLE_H__
 
 #include <inttypes.h>
+#include <n7OS/cpu.h>
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
@@ -44,5 +45,16 @@ void init_console();
  * have to implement it in the kernel and in the user program.
  */
 void console_putbytes(const char *s, int len);
+
+/*
+ * This function is called by the kernel to clear the screen.
+ */
+void console_clear();
+
+/*
+ * This function is called by the kernel to move the cursor to the given position.
+ * It calls outb to use the GPU.
+ */
+void console_cursor(int pos);
 
 #endif

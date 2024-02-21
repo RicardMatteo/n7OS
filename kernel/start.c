@@ -11,6 +11,12 @@ void kernel_start(void)
     // lancement des interruptions
     sti();
 
+    // test de la console
+    printf("Hello, kernel World!\n");
+    for (int i = 0; i < 100; i++) {
+        printf("Hello, kernel World! %d\n", i);
+    }
+
     // on ne doit jamais sortir de kernel_start
     while (1) {
         // cette fonction arrete le processeur
