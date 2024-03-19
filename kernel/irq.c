@@ -9,4 +9,5 @@ void init_irq_entry(int irq_num, uint32_t addr) {
     entry->zero = 0;
     entry->type_attr = 0x8E; 
     entry->offset_sup = (addr >> 16) & 0xFFFF;
+    // printf("IRQ %d initialized at %x\n", irq_num, addr); // DEBUG
 }

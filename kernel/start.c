@@ -16,8 +16,9 @@ void kernel_start(void)
     // lancement des interruptions
     sti();
 
+    init_timer();
     // initialisation du gestionnaire de mémoire
-    initkheap();
+    //init_kheap();
 
     // test de la console
     printf("Hello, kernel World!\n");
@@ -29,6 +30,7 @@ void kernel_start(void)
     __asm__("int $42");
     __asm__("int $43");
     __asm__("int $43");
+    __asm__("int $32");
 
     
 

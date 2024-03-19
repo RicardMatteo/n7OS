@@ -1,5 +1,6 @@
 #include <n7OS/irq.h>
 #include <n7OS/cpu.h>
+#include <n7OS/time.h>
 #include <stdio.h>
 
 #define HANDLER_ENTRIES_CUSTOM 25
@@ -19,5 +20,17 @@ void handler_en_C_old() {
 }
 
 void handler_en_C(unsigned irq_num) {
-    printf("Handler en C %d\n", irq_num);
+    switch (irq_num) {
+        // 0x20 est le numéro de l'IRQ du timer
+        case 0x20:
+            timer_IT_handler();
+            break;
+        // 0x21 est le numéro de l'IRQ du clavier
+        case 0x21:
+            printf("Clavier\n");
+            break;
+        default:
+            printf("Handler en C %d\n", irq_num);
+            break;
+    }
 }
