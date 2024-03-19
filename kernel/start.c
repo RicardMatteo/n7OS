@@ -7,14 +7,31 @@
 
 void kernel_start(void)
 {
+    // initialisation de la console
     init_console();
+
+    // initialisation de la gestion de la memoire
     setup_base(0 /* la memoire virtuelle n'est pas encore definie */);
+
+    // initialisation des appels systeme
+    init_syscall();
 
     // test des interruptions
     init_irq();
     
     // lancement des interruptions
     sti();
+
+    // test de l'appel systeme example
+    if ( example() == 1) {
+        printf("Appel systeme example \n ababa " );
+    }
+
+    if (write("Hello, kernel World!\n", 21) == 21) {
+        printf("Appel systeme write ok \n" );
+    }
+
+
 
     init_timer();
     // initialisation du gestionnaire de mémoire
@@ -24,6 +41,8 @@ void kernel_start(void)
     printf("Hello, kernel World!\n");
 
 
+    /*
+    // test des interruptions
     // on genere des interruptions
     __asm__("int $40");
     __asm__("int $41");
@@ -31,8 +50,18 @@ void kernel_start(void)
     __asm__("int $43");
     __asm__("int $43");
     __asm__("int $32");
+    */
 
-    
+    /*
+    // wait 10 seconds
+    for (int i = 0; i < 1000000000; i++) {
+        // do nothing
+    }
+
+    if ( shutdown(1) == -1) {
+        printf("Appel systeme shutdown ok \n " );
+    }
+    */
 
 
     // on ne doit jamais sortir de kernel_start

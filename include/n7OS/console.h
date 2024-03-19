@@ -3,6 +3,8 @@
 
 #include <inttypes.h>
 #include <n7OS/cpu.h>
+#include <n7OS/time.h>
+
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
