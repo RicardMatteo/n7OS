@@ -27,7 +27,7 @@ void handler_en_C(unsigned irq_num) {
             break;
         // 0x21 est le numéro de l'IRQ du clavier
         case 0x21:
-            printf("Clavier\n");
+            keyboard_IT_handler();
             break;
         // 0x80 est le numéro de l'IRQ des appels systèmes
         case 0x80:

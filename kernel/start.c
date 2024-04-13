@@ -4,6 +4,7 @@
 #include <n7OS/console.h>
 #include <n7OS/irq.h>
 #include <stdio.h>
+#include <n7OS/snake.h>
 
 void kernel_start(void)
 {
@@ -24,7 +25,7 @@ void kernel_start(void)
 
     // test de l'appel systeme example
     if ( example() == 1) {
-        printf("Appel systeme example \n ababa " );
+        printf("Appel systeme example OK\n" );
     }
 
     if (write("Hello, kernel World!\n", 21) == 21) {
@@ -34,12 +35,15 @@ void kernel_start(void)
 
 
     init_timer();
+    init_keyboard();
     // initialisation du gestionnaire de mémoire
     //init_kheap();
 
     // test de la console
     printf("Hello, kernel World!\n");
 
+    // test du snake
+    init_game();
 
     /*
     // test des interruptions

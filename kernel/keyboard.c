@@ -1,7 +1,15 @@
 #include <inttypes.h>
 #include <n7OS/cpu.h>
+#include <n7OS/snake.h>
 
 #define FREQUENCE 1190
+
+enum Focus {
+    CONSOLE,
+    GAME
+};
+
+enum Focus focus = GAME;
 
 unsigned char keyboard_map[128] =
 {
@@ -59,7 +67,27 @@ void keyboard_IT_handler() {
     char scancode = inb(0x60);
     if (scancode > 0) {
         //printf("Scancode: %d\n", scancode);
-        printf("%c", keyboard_map[scancode]);
+        if (focus == CONSOLE) {
+          printf("%c", keyboard_map[scancode]);
+        }
+        if (focus == GAME) {
+            switch (scancode) {
+                case 0x48:
+                    set_direction(UP);
+                    break;
+                case 0x50:
+                    set_direction(DOWN);
+                    break;
+                case 0x4B:
+                    set_direction(LEFT);
+                    break;
+                case 0x4D:
+                    set_direction(RIGHT);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
     outb(0x20, 0x20);
 
@@ -67,4 +95,8 @@ void keyboard_IT_handler() {
 
 void acquitter_IRQ_keyboard() {
     outb(0x20, 0x21);
+}
+
+void set_focus(enum Focus new_focus) {
+    focus = new_focus;
 }

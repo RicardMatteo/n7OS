@@ -5,8 +5,6 @@
 #include <n7OS/cpu.h>
 
 
-
-
 #define FREQUENCE 1190
 
 typedef struct {
@@ -26,5 +24,7 @@ void masquer_IRQ(uint8_t num_IRQ);
 void demasquer_IRQ(uint8_t num_IRQ);
 
 void acquitter_IRQ();
+
+int get_internal_time();
 
 #endif

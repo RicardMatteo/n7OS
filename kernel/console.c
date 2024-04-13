@@ -92,5 +92,12 @@ void console_put_time(time_t time) {
     scr_tab[pos+6] = CHAR_COLOR<<8|'0' + time.seconds/10;
     scr_tab[pos+7] = CHAR_COLOR<<8|'0' + time.seconds%10;
 }
-    
+
+void console_put_arbitrary(int pos, char c) {
+    scr_tab[pos] = CHAR_COLOR<<8|c;
+}
+
+void console_put_arbitrary_color(int pos, char c, char color) {
+    scr_tab[pos] = color<<8|c;
+}   
 
