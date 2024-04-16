@@ -88,7 +88,7 @@ void move_snake(snake_t *snake) {
         /* update map */
         map[snake->tail->x + snake->tail->y * MAP_WIDTH] = VOID;
         /* draw only the diff */
-        console_put_arbitrary((snake->tail->y + CONSOLE_OFFSET) * VGA_WIDTH + snake->tail->x, VOID);
+        console_put_arbitrary(Y_RATIO *(snake->tail->y + CONSOLE_OFFSET) * VGA_WIDTH + X_RATIO*snake->tail->x, VOID);
 
         /* update tail */
         snake_cell_t *last = snake->tail;
@@ -105,7 +105,7 @@ void move_snake(snake_t *snake) {
     /* update map */
     map[cell->x + cell->y * MAP_WIDTH] = SNAKE;
     /* draw only the diff */
-    console_put_arbitrary((cell->y + CONSOLE_OFFSET) * VGA_WIDTH + cell->x, SNAKE);
+    console_put_arbitrary(Y_RATIO *(cell->y + CONSOLE_OFFSET) * VGA_WIDTH + X_RATIO*cell->x, SNAKE);
 
 }
 
@@ -137,12 +137,13 @@ void spawn_apple() {
     apple_y = rand() % MAP_HEIGHT;
     } while (map[apple_x + apple_y * MAP_WIDTH] != VOID);
     map[apple_x + apple_y * MAP_WIDTH] = APPLE;
+    console_put_arbitrary(Y_RATIO *(apple_y + CONSOLE_OFFSET) * VGA_WIDTH + X_RATIO*apple_x, APPLE);
 }
 
 void draw_map() {
     for (int i = 0; i < MAP_HEIGHT; i++) {
         for (int j = 0; j < MAP_WIDTH; j++) {
-            console_put_arbitrary((i + CONSOLE_OFFSET) * VGA_WIDTH + j, map[j + i * MAP_WIDTH]);
+            console_put_arbitrary(Y_RATIO *(i + CONSOLE_OFFSET) * VGA_WIDTH + X_RATIO*j, map[j + i * MAP_WIDTH]);
         }
     }
 }
@@ -159,7 +160,7 @@ void init_game() {
 void update_game() {
     if (game_state == PLAYING) {
         move_snake(snake);
-        draw_map();
+        //draw_map();
     }
 }
 
