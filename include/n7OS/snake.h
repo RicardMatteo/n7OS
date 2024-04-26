@@ -16,6 +16,9 @@
 
 #define CONSOLE_OFFSET VGA_HEIGHT - MAP_HEIGHT
 
+#define X_RATIO 2
+#define Y_RATIO 1
+
 enum Direction {
     UP,
     DOWN,
