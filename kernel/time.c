@@ -1,5 +1,4 @@
 #include "n7OS/time.h"
-#include "n7OS/snake.h"
 
 int timer_ticks = 0;
 
@@ -17,13 +16,18 @@ void timer_IT_handler() {
     console_put_time(time_converter(timer_ticks++));
     
 
-    if (timer_ticks % 1000 == 0) {
+    if (timer_ticks % TICK_TIME_UPDATE == 0) {
         console_put_time(time_converter(timer_ticks));
     }
 
-    if (timer_ticks % 250 == 0) {
+    if (timer_ticks % TICK_GAME_UPDATE == 0) {
         update_game();
     }
+
+    if (timer_ticks % TICK_SCHEDULER_UPDATE == 0) {
+        scheduler();
+    }
+
 
 }
 

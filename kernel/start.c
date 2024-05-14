@@ -5,6 +5,10 @@
 #include <n7OS/irq.h>
 #include <stdio.h>
 #include <n7OS/snake.h>
+#include <n7OS/process.h>
+
+extern void idle();
+extern void processus1();
 
 void kernel_start(void)
 {
@@ -40,10 +44,10 @@ void kernel_start(void)
     //init_kheap();
 
     // test de la console
-    printf("Hello, kernel World!\n");
+    // printf("Hello, kernel World!\n");
 
     // test du snake
-    init_game();
+    // init_game();
 
     /*
     // test des interruptions
@@ -67,7 +71,13 @@ void kernel_start(void)
     }
     */
 
+    
+    init_process();
 
+ 
+    fork("processus1", processus1);    
+    scheduler();
+    printf("Kernel start\n");
     // on ne doit jamais sortir de kernel_start
     while (1) {
         // cette fonction arrete le processeur

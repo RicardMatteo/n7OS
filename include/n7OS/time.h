@@ -3,9 +3,16 @@
 
 #include <inttypes.h>
 #include <n7OS/cpu.h>
-
+#include "n7OS/snake.h"
+#include "n7OS/process.h"
 
 #define FREQUENCE 1190
+
+#define TICK_TIME_UPDATE 1000
+
+#define TICK_GAME_UPDATE 250
+
+#define TICK_SCHEDULER_UPDATE 100
 
 typedef struct {
     int hours;
