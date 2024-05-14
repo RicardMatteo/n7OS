@@ -59,4 +59,6 @@ void console_clear();
  */
 void console_cursor(int pos);
 
+void console_put_score(int score);
+
 #endif

@@ -35,8 +35,13 @@ void console_putchar(const char c) {
         // newline
         cursor_pos= (cursor_pos/VGA_WIDTH + 1) * VGA_WIDTH;
     } else if (c == '\b') {
-        // go backwards
-        cursor_pos--;
+        // erase
+        scr_tab[cursor_pos-1]= CHAR_COLOR<<8|' ';
+        // go backward
+        // check if we are not at the beginning
+        if (cursor_pos > VGA_WIDTH) {
+            cursor_pos--;
+        }
     } else if (c == '\t') {
         // tab
         cursor_pos = cursor_pos+8;
@@ -101,3 +106,23 @@ void console_put_arbitrary_color(int pos, char c, char color) {
     scr_tab[pos] = color<<8|c;
 }   
 
+void console_put_score(int score) {
+    int score_len = 1;
+    while (score/10 > 1) {
+        scr_tab[VGA_WIDTH - (8 + score_len)+ 2] = CHAR_COLOR<<8|('0' + score%10);
+        score_len++;
+        
+        score/=10;
+
+    }
+
+
+    int pos = VGA_WIDTH - (8 + score_len + 6+2);
+    scr_tab[pos] = CHAR_COLOR<<8|'S';
+    scr_tab[pos+1] = CHAR_COLOR<<8|'c';
+    scr_tab[pos+2] = CHAR_COLOR<<8|'o';
+    scr_tab[pos+3] = CHAR_COLOR<<8|'r';
+    scr_tab[pos+4] = CHAR_COLOR<<8|'e';
+    scr_tab[pos+5] = CHAR_COLOR<<8|':';
+    
+}

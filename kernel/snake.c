@@ -98,7 +98,8 @@ void move_snake(snake_t *snake) {
         free(last);
     } else {
         snake_length++;
-        printf("Score: %d\n", snake_length);
+        console_put_score(snake_length);
+        //printf("Score: %d\n", snake_length);
         spawn_apple();
     }
 

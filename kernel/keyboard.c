@@ -9,7 +9,7 @@ enum Focus {
     GAME
 };
 
-enum Focus focus = GAME;
+enum Focus focus = CONSOLE;
 
 // Tableau de drapeaux pour suivre l'état de chaque touche
 uint8_t key_states[128] = {0};

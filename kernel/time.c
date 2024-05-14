@@ -28,7 +28,6 @@ void timer_IT_handler() {
         scheduler();
     }
 
-
 }
 
 time_t time_converter(int time) {
