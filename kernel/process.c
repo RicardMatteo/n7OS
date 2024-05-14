@@ -48,10 +48,10 @@ void init_process() {
     pid_t pid_processus3 = creer("processus3", processus3);
     pid_t pid_processus4 = creer("processus4", processus4);
     pid_t pid_processus5 = creer("processus5", processus5);
-    pid_t pid_processus6 = creer("processus6", processus6);
+    /*pid_t pid_processus6 = creer("processus6", processus6);
     pid_t pid_processus7 = creer("processus7", processus7);
     pid_t pid_processus8 = creer("processus8", processus8);
-    pid_t pid_processus9 = creer("processus9", processus9);
+    pid_t pid_processus9 = creer("processus9", processus9);*/
     
     idle();
 
@@ -196,8 +196,7 @@ void scheduler() {
     sti();
     // On charge le contexte du processus suivant
     ctx_sw(process_table[pid].regs, process_table[next_pid].regs);
-    // On réactive les interruptions
-    sti();  
+    
 }
 
 void terminer() {

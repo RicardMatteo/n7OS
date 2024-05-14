@@ -2,18 +2,58 @@
 
 int timer_ticks = 0;
 
+// Tableau des prochaines fin de sleep
+time_process_t sleep_table[MAX_PROCESS];
+
+
 void init_timer() {
     outb(0x34, 0x43);
     outb(FREQUENCE&0xFF, 0x40);
     outb(FREQUENCE>>8, 0x40);
     outb(inb(0x20) & 0xFE, 0x21);
     printf("Timer initialized\n");
+
+    // On initialise le tableau des sleep
+    for (int i = 0; i < MAX_PROCESS; i++) {
+        sleep_table[i].pid = -1;
+        sleep_table[i].time = -1;
+    }
+
+    timer_ticks = 0;
+    console_put_time(time_converter(timer_ticks));
+}
+
+void sleep(int time) {
+    // On récupère le pid du processus actif
+    pid_t pid = getpid();
+    // On récupère le temps actuel
+    int current_time = get_internal_time();
+    // On ajoute le temps de sleep au temps actuel
+    int end_time = current_time + time * 1000;
+    // On ajoute le pid et le temps de fin de sleep dans le tableau
+    // tout en le gardant trié par ordre croissant de temps
+    for (int i = 0; i < MAX_PROCESS; i++) {
+        if (sleep_table[i].time == -1) {
+            sleep_table[i].pid = pid;
+            sleep_table[i].time = end_time;
+            break;
+        }
+        if (sleep_table[i].time > end_time) {
+            for (int j = MAX_PROCESS - 1; j > i; j--) {
+                sleep_table[j] = sleep_table[j - 1];
+            }
+            sleep_table[i].pid = pid;
+            sleep_table[i].time = end_time;
+            break;
+        }
+    }
+    bloquer();
 }
 
 void timer_IT_handler() {
 
     acquitter_IRQ();
-    console_put_time(time_converter(timer_ticks++));
+    timer_ticks++;
     
 
     if (timer_ticks % TICK_TIME_UPDATE == 0) {
@@ -26,6 +66,23 @@ void timer_IT_handler() {
 
     if (timer_ticks % TICK_SCHEDULER_UPDATE == 0) {
         scheduler();
+    }
+
+    // On vérifie si un processus doit se réveiller
+    for (int i = 0; i < MAX_PROCESS; i++) {
+        if (sleep_table[i].time != -1 && sleep_table[i].time <= timer_ticks) {
+            // On débloque le processus
+            debloquer(sleep_table[i].pid);
+            // On enlève le processus du tableau
+            sleep_table[i].pid = -1;
+            sleep_table[i].time = -1;
+
+            // On décale les processus suivants
+            for (int j = i; j < MAX_PROCESS - 1; j++) {
+                sleep_table[j] = sleep_table[j + 1];
+            }
+
+        }
     }
 
 }
