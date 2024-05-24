@@ -3,6 +3,8 @@
 
 struct process_t process_table[MAX_PROCESS];
 
+extern void envelopper_asm(fnptr f);
+
 extern void ctx_sw(uint32_t *old, uint32_t *new);
 extern void init_ctx(uint32_t *regs);
 extern void idle();
@@ -22,7 +24,7 @@ pid_t pid_actif = -1;
 pid_t getpid() {
     return pid_actif;
 }
-
+/*
 void init_process() {
     initQueue();
 
@@ -56,14 +58,82 @@ void init_process() {
     pid_t pid_processus7 = creer("processus7", processus7, 0, argv);
     pid_t pid_processus8 = creer("processus8", processus8, 0, argv);
     pid_t pid_processus9 = creer("processus9", processus9, 0, argv);
-    */
+    *
     
     idle();
 
 
     //init_ctx(process_table[pid_idle].regs);
     //printf("Contexte idle initialise\n");
+}*/
+
+void init_process() {
+    initQueue();
+    for (int i = 0; i < MAX_PROCESS; i++) {
+        process_table[i].pid = -1;
+        process_table[i].state = -1;
+        process_table[i].name = 0;
+        for (int j = 0; j < NUM_REGS; j++) {
+            process_table[i].regs[j] = 0;
+        }
+    }
+    
+    char *argv[] = {"11"};
+    pid_t pid_idle = creer("idle", idle, 0, 0);
+    pid_actif = dequeue();
+    process_table[pid_idle].state = ELU;
+
+    char *argv1[] = {"arg1", "arg2"};
+    //pid_t pid_processusX = creer("processusX", processusX, 2, argv1);
+    pid_t pid_processus1 = creer("processus1", processus1, 0, 0);
+    pid_t pid_processus2 = creer("processus2", processus2, 0, 0);
+    idle();
 }
+
+
+/*
+void envelopper(fnptr f) {
+    int argc;
+    void *argv[argc];
+
+    // Récupérer les arguments à partir de la structure de processus actuelle
+    pid_t pid = getpid();
+    argc = process_table[pid].argc;
+    for (int i = 0; i < argc; i++) {
+        argv[i] = process_table[pid].args[i];
+    }
+
+    printf("Envelopper %d\n", getpid());
+    printf("esp envelopper : %d\n", process_table[getpid()].regs[ESP]);
+
+    // Appeler la fonction du processus avec les arguments
+    //f();
+    terminer();
+}*/
+
+void envelopper() {
+    int argc;
+    void *argv[argc];
+
+    // Récupérer l'adresse de la fonction à partir de la pile
+    
+
+    // Récupérer les autres arguments à partir de la structure de processus actuelle
+    pid_t pid = getpid();
+    fnptr *f = (fnptr *)process_table[pid].f;
+    argc = process_table[pid].argc;
+    for (int i = 0; i < argc; i++) {
+        argv[i] = process_table[pid].args[i];
+    }
+
+    printf("Envelopper %d\n", getpid());
+    printf("esp envelopper : %d\n", process_table[getpid()].regs[ESP]);
+
+    // Appeler la fonction du processus avec les arguments
+    f();
+    terminer();
+}
+
 
 
 // todo sleep and fork
@@ -72,16 +142,43 @@ void init_process() {
 pid_t fork(const char *name, fnptr f, int argc, char *argv[]) {
     return creer(name, f, argc, argv);
 }
-
+/*
 void envelopper(fnptr f) {
     printf("Envelopper %d\n", getpid());
     // print esp
     printf("esp envelopper : %d\n", process_table[getpid()].regs[ESP]);
     f();
     terminer();
+}*/
+/*
+void envelopper(fnptr f) {
+    int argc;
+    char **argv;
+    
+    // Récupérer argc et argv depuis la pile
+    __asm__ __volatile__ (
+        "movl %%esp, %0\n" // Récupérer l'adresse actuelle du sommet de la pile
+        "movl %0, %1" // Fixer argv car il est modifié par la première instruction
+        : "=r"(argv), "=r"(argv)
+    );
+    argc = *(int *)(argv + 1); // argc est juste avant argv
+    argv = (char **)(argv + 2); // argv est juste après argc
+    
+    printf("Envelopper %d\n", getpid());
+    printf("esp envelopper : %d\n", process_table[getpid()].regs[ESP]);
+    
+    // Appeler la fonction du processus avec les arguments
+    f(argc, argv);
+    terminer();
 }
 
+
+
+*/
+
+
 /* Création d'un processus */
+/*
 pid_t creer(const char *name, fnptr f, int argc, char *argv[]){
     pid_t pid = allouer_pid();
     // On alloue un pid un processus
@@ -126,10 +223,10 @@ pid_t creer(const char *name, fnptr f, int argc, char *argv[]){
     process_table[pid].regs[EDI] = 0;
     */
     // on initialise le contexte du processus
-    argc = 1;
+    /*argc = 1;
     argv[0] = f;
     init_context(&process_table[pid].regs, envelopper, process_table[pid].stack, argc, argv);
-
+*//*
     if (pid == 0) {
         process_table[pid].stack[STACK_SIZE-1] = (uint32_t) f;
         process_table[pid].regs[ESP] = process_table[pid].stack + STACK_SIZE-1;
@@ -139,7 +236,7 @@ pid_t creer(const char *name, fnptr f, int argc, char *argv[]){
     // Process correctement créé
     return pid;
 }
-
+*/
 
 /* Passage de l'état élu à prêt actif */
 void arreter(){
@@ -221,16 +318,16 @@ void scheduler() {
     
     /*
     printf("Changement de contexte\n");
-    printf("pid : %d\n", pid);
-    printf("next_pid : %d\n", next_pid);
     // print les esp
     printf("esp pid : %d\n", process_table[pid].regs[ESP]);
     printf("esp next_pid : %d\n", process_table[next_pid].regs[ESP]);
     */
-    
+    //printf("pid : %d\n", pid);
+    //printf("next_pid : %d\n", next_pid);
+    //
     // Print les esp
-    printf("esp pid : %d\n", process_table[pid].regs[ESP]);
-    printf("esp next_pid : %d\n", process_table[next_pid].regs[ESP]);
+    //printf("esp pid : %d\n", process_table[pid].regs[ESP]);
+    //printf("esp next_pid : %d\n", process_table[next_pid].regs[ESP]);
 
     // On coupe les interruptions le temps de changer de contexte
     sti();
@@ -269,6 +366,7 @@ pid_t allouer_pid() {
     return -1;
 }
 
+/*
 // Fonction pour initialiser le contexte d'un processus avec des arguments
 void init_context(uint32_t *ctx, void (*func)(int, int*), uint8_t *stack, int num_args, int *args) {
     uint32_t *stack_top = (uint32_t *)(stack + STACK_SIZE);
@@ -290,4 +388,54 @@ void init_context(uint32_t *ctx, void (*func)(int, int*), uint8_t *stack, int nu
     memset(ctx, 0, sizeof(uint32_t) * 5);
     ctx[ESP] = (uint32_t)stack_top;            // ESP pointe vers le sommet de la pile initialisée
     //ctx[ebp] = 0;                              // EBP initial
+}
+
+*/
+
+pid_t creer(const char *name, fnptr f, int argc, char *argv[]) {
+    pid_t pid = allouer_pid();
+    if (pid == -1) {
+        printf("Pas de pid disponible\n");
+        return -1;
+    }
+    process_table[pid].f = f;
+    // Copier les arguments dans la structure de processus
+    for (int i = 0; i < argc; i++) {
+        process_table[pid].args[i] = argv[i];
+    }
+    process_table[pid].argc = argc;
+
+    // Réserver de l'espace sur la pile pour l'adresse de la fonction
+    process_table[pid].stack[STACK_SIZE-1] = (uint32_t)f;
+
+    process_table[pid].pid = pid;
+    process_table[pid].state = ACTIF;
+    addProcess(pid);
+    
+    process_table[pid].name = name;
+
+    // Initialisation de la pile du processus
+    uint32_t *stack_top = (uint32_t *)(process_table[pid].stack + STACK_SIZE);
+
+    // Placer les arguments sur la pile
+    for (int i = argc - 1; i >= 0; i--) {
+        *(--stack_top) = (uint32_t)argv[i];
+    }
+    
+    // Placer le nombre d'arguments et l'adresse des arguments
+    *(--stack_top) = (uint32_t)(stack_top + 1);
+    *(--stack_top) = argc;
+    
+    // Placer l'adresse de la fonction et l'enveloppe sur la pile
+    *(--stack_top) = (uint32_t)f;
+    *(--stack_top) = (uint32_t)envelopper;
+
+    // Initialiser le contexte du processus
+    for (int i = 0; i < NUM_REGS; i++) {
+        process_table[pid].regs[i] = 0;
+    }
+    process_table[pid].regs[ESP] = (uint32_t)stack_top;
+    
+    printf("Processus %s cree avec le pid %d\n", name, pid);
+    return pid;
 }

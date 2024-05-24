@@ -6,6 +6,7 @@
 
 #define MAX_PROCESS 32
 #define STACK_SIZE 1024
+#define NUM_REGS 5
 
 // Enumération des états d'un processus
 enum process_state_t {
@@ -41,6 +42,9 @@ typedef struct process_t {
     uint32_t stack[STACK_SIZE];
     uint32_t regs[5];
     const char *name;
+    int argc;
+    char **args;
+    fnptr* f;
 };
 
 void init_process();
@@ -62,5 +66,7 @@ void terminer();
 void liberer_pid(pid_t pid);
 
 pid_t allouer_pid();
+
+void envelopper();
 
 #endif
