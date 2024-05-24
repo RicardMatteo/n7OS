@@ -5,6 +5,7 @@
  * 
  */
 extern uint32_t mem_heap;
+uint32_t placement_address;
 
 void init_kheap() {
     placement_address = (uint32_t)&mem_heap;

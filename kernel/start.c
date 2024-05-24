@@ -74,10 +74,6 @@ void kernel_start(void)
     
     init_process();
 
- 
-    fork("processus1", processus1);    
-    scheduler();
-    printf("Kernel start\n");
     // on ne doit jamais sortir de kernel_start
     while (1) {
         // cette fonction arrete le processeur

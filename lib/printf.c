@@ -48,11 +48,12 @@
 #include <doprnt.h>
 #include <n7OS/console.h>
 
+
 /*
  * This is the function called by printf to send its output to the screen. You
  * have to implement it in the kernel.
  */
-extern void console_putbytes(const char *s, int len);
+//extern void write(const char *s, int len);
 
 /* This version of printf is implemented in terms of putchar and puts.  */
 
@@ -70,6 +71,7 @@ flush(struct printf_state *state)
 	 * It would be nice to call write(1,) here, but if fd_set_console
 	 * has not been called, it will break.
 	 */
+	//write((const char *) state->buf, state->index);
 	console_putbytes((const char *)state->buf, state->index);
 
 	state->index = 0;
@@ -86,7 +88,9 @@ printf_char(arg, c)
 	{
 		flush(state);
 		state->buf[0] = c;
+		//write((const char *)state->buf, state->index);
 		console_putbytes((const char *)state->buf, 1);
+	
 	}
 	else
 	{
@@ -130,14 +134,15 @@ int putchar(int c)
 {
 	char ch = c;
 	console_putbytes(&ch, 1);
-        return (unsigned char)ch;
+	//write(&ch, 1);
+    return (unsigned char)ch;
 }
 
 int puts(const char *s)
 {
-        while (*s) {
-                putchar(*s++);
-        }
+	while (*s) {
+    	putchar(*s++);
+    }
 	putchar('\n');
-        return 0;
+    return 0;
 }

@@ -43,14 +43,11 @@ typedef struct process_t {
     const char *name;
 };
 
-
-
-
 void init_process();
 
-pid_t fork(const char *name, fnptr f);
+pid_t fork(const char *name, fnptr f, int argc, char *argv[]);
 
-pid_t creer(const char *name, fnptr f);
+pid_t creer (const char *name, fnptr f, int argc, char *argv[]);
 
 void arreter();
 

@@ -7,26 +7,29 @@ void processus2() {
   }
 }
 
-
+void processusX(int x) {
+  for (int i = 0; i < x; i++) {
+    printf("Hello, world from P%d\n", x);
+  }
+}
 
 void processus3() {
   for (;;) {
     sleep(2);
-
     printf("Hello, world from P3\n");
   }
 }
 
 void processus4() {
   for (;;) {
-    sleep(3);
+    sleep(5);
     printf("Hello, world from P4\n");
   }
 }
 
 void processus5() {
   for (;;) {
-    sleep(1);
+    sleep(5);
     printf("Hello, world from P5\n");
   }
 }

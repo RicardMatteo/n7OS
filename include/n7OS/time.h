@@ -20,6 +20,11 @@ typedef struct {
     int seconds;
 } time_t;
 
+typedef struct {
+    int time;
+    pid_t pid;
+} time_process_t;
+
 void init_timer();
 
 void handler_IT_timer();

@@ -7,12 +7,19 @@
 
 #include <inttypes.h>
 
+
+
+
 /**
  * @brief Description d'une ligne de la table de page
  * 
+ * Bit :     | 31              12 | 11 10 9 | 8 7  | 6 | 5 | 4 3  | 2 | 1 | 0 |
+ * Contenu : | adresse de la page | Avail   | RSVD | D | A | RSVD | U | W | P | 
  */
 typedef struct {
-    // a completer
+    uint16_t addr_high;
+    uint8_t addr_low;
+    uint8_t flags;
 } page_table_entry_t;
 
 /**
