@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <n7OS/snake.h>
 #include <n7OS/process.h>
+#include <n7OS/paging.h>
+#include <n7OS/mem.h>
 
 extern void idle();
 extern void processus1();
@@ -14,18 +16,22 @@ void kernel_start(void)
 {
     // initialisation de la console
     init_console();
+    // printf("> console initialisée\n");
 
     // initialisation de la gestion de la memoire
-    setup_base(0 /* la memoire virtuelle n'est pas encore definie */);
+    initialise_paging();
+    // printf("> gestion de la mémoire initialisée\n");
 
     // initialisation des appels systeme
     init_syscall();
+    printf("> syscalls initialisées\n");
 
     // test des interruptions
     init_irq();
     
     // lancement des interruptions
     sti();
+    printf("> interruptions initialisées\n");
 
     // test de l'appel systeme example
     if ( example() == 1) {
@@ -37,17 +43,21 @@ void kernel_start(void)
     }
 
 
-
+    // initialisation du timer
     init_timer();
+    printf("> timer initialisé\n");
+
+    // initialisation du clavier
     init_keyboard();
-    // initialisation du gestionnaire de mémoire
-    //init_kheap();
+    printf("> clavier initialisé\n");
+
+
 
     // test de la console
     // printf("Hello, kernel World!\n");
 
     // test du snake
-    // init_game();
+    init_game();
 
     /*
     // test des interruptions
@@ -61,10 +71,7 @@ void kernel_start(void)
     */
 
     /*
-    // wait 10 seconds
-    for (int i = 0; i < 1000000000; i++) {
-        // do nothing
-    }
+   
 
     if ( shutdown(1) == -1) {
         printf("Appel systeme shutdown ok \n " );
@@ -73,6 +80,7 @@ void kernel_start(void)
 
     
     init_process();
+    printf("> gestion des processus initialisée\n");
 
     // on ne doit jamais sortir de kernel_start
     while (1) {
