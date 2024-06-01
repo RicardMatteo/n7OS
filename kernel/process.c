@@ -86,11 +86,6 @@ void callWithArgs(fnptr f, int argc, char *argv[])
     }
 }
 
-pid_t fork(const char *name, fnptr f, int argc, char *argv[])
-{
-    return creer(name, f, argc, argv);
-}
-
 /* Passage de l'état élu à prêt actif */
 void arreter()
 {
@@ -263,4 +258,28 @@ pid_t creer(const char *name, fnptr f, int argc, char *argv[])
 
     printf("Processus %s cree avec le pid %d\n", name, pid);
     return pid;
+}
+
+void print_process()
+{
+    for (int i = 0; i < MAX_PROCESS; i++)
+    {
+        if ((int)process_table[i].pid != -1)
+        {
+            printf("Processus %s avec le pid %d\n", process_table[i].name, process_table[i].pid);
+        }
+    }
+}
+
+void process_test()
+{
+    pid_t temp_pid;
+    (void)temp_pid; // Suppress unused variable warning
+    temp_pid = creer("processus1", processus1, 0, 0);
+    temp_pid = creer("processus2", processus2, 0, 0);
+    // processus X with 2 arguments
+    char *argv1[] = {"11"};
+    temp_pid = creer("processusX", processusX, 1, argv1);
+
+    print_process();
 }

@@ -1,9 +1,13 @@
 #ifndef __CONSOLE_H__
 #define __CONSOLE_H__
 
+#include "n7OS/time_t.h"
+
 #include <inttypes.h>
 #include <n7OS/cpu.h>
 #include <n7OS/time.h>
+#include <string.h>
+#include <n7OS/syscall_defs.h>
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
@@ -35,9 +39,14 @@
 
 // Character color: blink|back|text
 #define BLINK 0 << 7
+
 #define BACK BLACK << 4
+#define H_BACK YELLOW << 4
+
 #define TEXT WHITE
+
 #define CHAR_COLOR BLINK | BACK | TEXT
+#define HEADER_COLOR BLINK | BACK | L_CYAN
 
 void init_console();
 
@@ -58,6 +67,8 @@ void console_clear();
  */
 void console_cursor(int pos);
 
+void console_put_cursor(int pos);
+
 void console_put_score(int score);
 
 void console_full_clear();
@@ -66,6 +77,10 @@ void console_put_arbitrary(int pos, char c);
 
 struct time_t;
 
-// void console_put_time(time_t time);
+void console_put_time(time_t time);
+
+void exec_line();
+
+void print_help();
 
 #endif

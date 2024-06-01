@@ -1,6 +1,7 @@
 #ifndef __TIME_H__
 #define __TIME_H__
 
+#include "n7OS/time_t.h"
 #include <inttypes.h>
 #include <n7OS/cpu.h>
 #include "n7OS/snake.h"
@@ -13,13 +14,6 @@
 #define TICK_GAME_UPDATE 250
 
 #define TICK_SCHEDULER_UPDATE 100
-
-typedef struct
-{
-    int hours;
-    int minutes;
-    int seconds;
-} time_t;
 
 typedef struct
 {

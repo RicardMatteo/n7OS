@@ -12,7 +12,7 @@ void init_timer()
     outb(FREQUENCE & 0xFF, 0x40);
     outb(FREQUENCE >> 8, 0x40);
     outb(inb(0x20) & 0xFE, 0x21);
-    printf("Timer initialized\n");
+    printf("> Timer initialized\n");
 
     // On initialise le tableau des sleep
     for (int i = 0; i < MAX_PROCESS; i++)

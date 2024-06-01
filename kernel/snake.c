@@ -60,7 +60,10 @@ void move_snake(snake_t *snake)
     if (map[cell->x + cell->y * MAP_WIDTH] == WALL || map[cell->x + cell->y * MAP_WIDTH] == SNAKE)
     {
         game_state = GAME_OVER;
-        printf("Game Over\n");
+        set_focus(CONSOLE);
+        // set the cursor to the bottom of the game map
+        console_put_cursor((MAP_HEIGHT + CONSOLE_OFFSET) * VGA_WIDTH + 2);
+        printf("GGame Over, your score is: %d\n>", snake_length);
         return;
     }
 
@@ -144,6 +147,7 @@ void draw_map()
 void init_game()
 {
     console_clear();
+    set_focus(GAME);
     init_snake();
     init_map();
     game_state = PLAYING;

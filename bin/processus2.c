@@ -13,7 +13,7 @@ int atoi(const char *str)
 
 void processus2()
 {
-  for (;;)
+  for (int i = 0; i < 12; i++)
   {
     sleep(1);
     printf("Hello, world from P2\n");

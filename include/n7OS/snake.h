@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <n7OS/rand.h>
+#include <n7OS/keyboard.h>
 
 #define VOID ' '
 #define WALL '#'
