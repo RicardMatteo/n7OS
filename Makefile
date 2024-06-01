@@ -9,7 +9,7 @@ LIBS= lib/lib.o
 
 QEMU = qemu-system-i386
 QEMUOPTS = -cpu pentium -rtc base=localtime -k fr -m 256M  -kernel kernel.bin
-QEMUGDB= -s -S -gdb tcp::1234
+QEMUGDB= -S -gdb tcp::1234
 
 DIRS=--directory=kernel --directory=boot --directory=bin --directory=lib
 
@@ -54,7 +54,7 @@ dbg-vscode: kernel.bin
 	$(QEMU) $(QEMUOPTS) $(QEMUGDB) &
 
 dbg: all
-	$(EMACS) --eval '(progn (make-term "QEMU" "qemu-system-i386" nil "-s" "-S" "-m" "256M" "-kernel" "kernel.bin" "-display" "curses") (split-window-horizontally) (split-window-vertically) (balance-windows) (gdb "$(DEBUG) $(DIRS) -i=mi kernel.bin") (insert "target remote :1234") (other-window 2) (toggle-frame-fullscreen) (switch-to-buffer "*QEMU*") (other-window -2))'
+	$(EMACS) --eval '(progn (make-term "QEMU" "qemu-system-i386" nil "-s" "-S" "-m" "256M" "-kernel" "kernel.bin" "-display" "curses") (split-window-horizontally) (split-window-vertically) (balance-windows) (gdb "$(DEBUG) $(DIRS) -i=mi kernel.bin") (other-window 2) (toggle-frame-fullscreen) (switch-to-buffer "*QEMU*") (other-window -2))'
 
 
 run: all
