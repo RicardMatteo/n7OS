@@ -14,20 +14,22 @@
 
 #define TICK_SCHEDULER_UPDATE 100
 
-typedef struct {
+typedef struct
+{
     int hours;
     int minutes;
     int seconds;
 } time_t;
 
-typedef struct {
+typedef struct
+{
     int time;
     pid_t pid;
 } time_process_t;
 
 void init_timer();
 
-void handler_IT_timer();
+void timer_IT_handler();
 
 time_t time_converter(int time);
 
@@ -38,5 +40,7 @@ void demasquer_IRQ(uint8_t num_IRQ);
 void acquitter_IRQ();
 
 int get_internal_time();
+
+void sleep(int time);
 
 #endif

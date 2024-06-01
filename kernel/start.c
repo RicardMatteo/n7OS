@@ -8,6 +8,9 @@
 #include <n7OS/process.h>
 #include <n7OS/paging.h>
 #include <n7OS/mem.h>
+#include <n7OS/syscall_defs.h>
+#include <n7OS/sys.h>
+#include <n7OS/keyboard.h>
 
 extern void idle();
 extern void processus1();
@@ -28,20 +31,21 @@ void kernel_start(void)
 
     // test des interruptions
     init_irq();
-    
+
     // lancement des interruptions
     sti();
     printf("> interruptions initialisées\n");
 
     // test de l'appel systeme example
-    if ( example() == 1) {
-        printf("Appel systeme example OK\n" );
+    if (sys_example() == 1)
+    {
+        printf("Appel systeme example OK\n");
     }
 
-    if (write("Hello, kernel World!\n", 21) == 21) {
-        printf("Appel systeme write ok \n" );
+    if (sys_write("Hello, kernel World!\n", 21) == 21)
+    {
+        printf("Appel systeme write ok \n");
     }
-
 
     // initialisation du timer
     init_timer();
@@ -51,13 +55,11 @@ void kernel_start(void)
     init_keyboard();
     printf("> clavier initialisé\n");
 
-
-
     // test de la console
     // printf("Hello, kernel World!\n");
 
     // test du snake
-    init_game();
+    // init_game();
 
     /*
     // test des interruptions
@@ -71,19 +73,19 @@ void kernel_start(void)
     */
 
     /*
-   
+
 
     if ( shutdown(1) == -1) {
         printf("Appel systeme shutdown ok \n " );
     }
     */
 
-    
     init_process();
     printf("> gestion des processus initialisée\n");
 
     // on ne doit jamais sortir de kernel_start
-    while (1) {
+    while (1)
+    {
         // cette fonction arrete le processeur
         hlt();
     }

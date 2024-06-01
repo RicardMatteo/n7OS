@@ -7,45 +7,51 @@
 
 extern void handler_syscall();
 
-void init_syscall() {
+void init_syscall()
+{
   // ajout de la fonction de traitement de l'appel systeme
   add_syscall(NR_example, sys_example);
   add_syscall(NR_shutdown, sys_shutdown);
   add_syscall(NR_write, sys_write);
 
   // initialisation de l'IT soft qui gère les appels systeme
-  init_irq_entry(0x80, (uint32_t) handler_syscall);
+  init_irq_entry(0x80, (uint32_t)handler_syscall);
 }
 
 // code de la fonction de traitement de l'appel systeme example
-int sys_example() {
+int sys_example()
+{
   // on ne fait que retourner 1
   return 1;
 }
 
-
-int sys_shutdown(int n) {
-  if(n == 1) {
+int sys_shutdown(int n)
+{
+  if (n == 1)
+  {
     outw(0x2000, 0x604); // Power off qemu > 2.0
     return -1;
-  } else {
+  }
+  else
+  {
     return n;
   }
 }
 
-int sys_write(const char* s, int len) {
+int sys_write(const char *s, int len)
+{
   int writtenBytes;
-  if((len >= 0) && strlen(s) == len) {
-    console_putbytes(s,len);
+  if ((len >= 0))
+  {
+    console_putbytes(s, len);
     writtenBytes = len;
-  } else {
+  }
+  else
+  {
     writtenBytes = -1;
   }
   return writtenBytes;
 }
-
-
-
 
 /*
 
@@ -55,5 +61,3 @@ int sys_write(int fd, const char *buf, size_t count) {
   syscall3(int, write, int, fd, const char *, buf, size_t, count);
 }
 */
-
-

@@ -1,8 +1,4 @@
 #include "n7OS/paging.h"
-#include "n7OS/kheap.h"
-#include "string.h"
-#include "n7OS/mem.h"
-#include "stdio.h"
 
 PageDirectory pageDirectory;
 
@@ -12,7 +8,7 @@ void handler_page_fault(registers_t reg) {
     // The faulting address is stored in the CR2 register.
     uint32_t faulting_address;
     __asm__ __volatile__("mov %%cr2, %0" : "=r" (faulting_address));
-    
+
     // The error code gives us details of what happened.
     int present = !(reg.err_code & 0x1); // Page not present
     int rw = reg.err_code & 0x2;           // Write operation?
@@ -31,54 +27,58 @@ void handler_page_fault(registers_t reg) {
     PANIC("Page fault");
 }*/
 
-void setPageEntry(PTE *page_table_entry, uint32_t new_page, int is_writeable, int is_kernel) {
-    page_table_entry->page_entry.present= 1;
-    page_table_entry->page_entry.accessed= 0;
-    page_table_entry->page_entry.dirty= 0;
-    page_table_entry->page_entry.rw= is_writeable;
-    page_table_entry->page_entry.user= ~is_kernel;
-    page_table_entry->page_entry.page= new_page>>12;
+void setPageEntry(PTE *page_table_entry, uint32_t new_page, int is_writeable, int is_kernel)
+{
+    page_table_entry->page_entry.present = 1;
+    page_table_entry->page_entry.accessed = 0;
+    page_table_entry->page_entry.dirty = 0;
+    page_table_entry->page_entry.rw = is_writeable;
+    page_table_entry->page_entry.user = ~is_kernel;
+    page_table_entry->page_entry.page = new_page >> 12;
 }
 
-void initialise_paging() {
+void initialise_paging()
+{
 
     init_kheap();
 
-    uint32_t index= 0;
-    
+    uint32_t index = 0;
+
     init_mem();
 
-    pageDirectory= (PageDirectory) kmalloc_a (sizeof(PDE)*1024);
-    //memset(pageDirectory, 0, sizeof(PDE)*1024);
+    pageDirectory = (PageDirectory)kmalloc_a(sizeof(PDE) * 1024);
+    // memset(pageDirectory, 0, sizeof(PDE)*1024);
 
-    for (int i= 0; i<1024; ++i) {
-        PageTable new_page_table= (PageTable) kmalloc_a(sizeof(PTE)*1024);
-        //memset(new_page_table, 0, sizeof(PTE)*1024);
-        //pageDirectory[i].value= (uint32_t) new_page_table|PAGE_PRESENT|PAGE_RW;
-        pageDirectory[i].dir_entry.page_table= (uint32_t) new_page_table >> 12;
-        pageDirectory[i].dir_entry.present= 1;
-        pageDirectory[i].dir_entry.rw= 1;
-        pageDirectory[i].dir_entry.user= 1;
-        
-        index= (uint32_t) new_page_table + sizeof(PTE) * 1024;
+    for (int i = 0; i < 1024; ++i)
+    {
+        PageTable new_page_table = (PageTable)kmalloc_a(sizeof(PTE) * 1024);
+        // memset(new_page_table, 0, sizeof(PTE)*1024);
+        // pageDirectory[i].value= (uint32_t) new_page_table|PAGE_PRESENT|PAGE_RW;
+        pageDirectory[i].dir_entry.page_table = (uint32_t)new_page_table >> 12;
+        pageDirectory[i].dir_entry.present = 1;
+        pageDirectory[i].dir_entry.rw = 1;
+        pageDirectory[i].dir_entry.user = 1;
+
+        index = (uint32_t)new_page_table + sizeof(PTE) * 1024;
     }
 
-    for (int i= 0; i<index; i += PAGE_SIZE) {
+    for (unsigned int i = 0; i < index; i += PAGE_SIZE)
+    {
         alloc_page_entry(i, 1, 1);
     }
 
     // register_interrupt_handler(14, handler_page_fault);
 
-    //loadPageDirectory((unsigned int *)pageDirectory);
+    // loadPageDirectory((unsigned int *)pageDirectory);
     enablePaging();
-    //return 0;
-    setup_base((uint32_t) pageDirectory);
-    //setup_base((uint32_t) 0);
-
+    // return 0;
+    setup_base((uint32_t)pageDirectory);
+    // setup_base((uint32_t) 0);
 }
 
-PageTable alloc_page_entry(uint32_t address, int is_writeable, int is_kernel ) {
-    // address = adresse virtuelle à allouer 
+PageTable alloc_page_entry(uint32_t address, int is_writeable, int is_kernel)
+{
+    // address = adresse virtuelle à allouer
     // address = idx_PDE | idx_PTE | offset
     //             10    |    10   |   12
 
@@ -87,15 +87,15 @@ PageTable alloc_page_entry(uint32_t address, int is_writeable, int is_kernel ) {
 
     // on recupere l'entree dans le répertoire de page
     // une entree contient l'adresse de la table de page + bits de controle
-    PDE page_dir_entry = pageDirectory[idx_pagedir]; 
-    
+    PDE page_dir_entry = pageDirectory[idx_pagedir];
+
     // page_table= ...; // on recupere l'adresse de la page de table dans le répertoire de page
-    page_table = (PageTable) (page_dir_entry.dir_entry.page_table << 12);     
-    //uint32_t phy_page= ...; // recherche d'une page libre dans la memoire physique
-    // uint32_t phy_page = findfreePage(); // recherche d'une page libre dans la memoire physique
-    
-    //int idx_pagetab= ...; // calcul de la position de la page dans la table de page
-    int idx_pagetab = (address >> 12) & 0x3FF; // calcul de la position de la page dans la table de page        
+    page_table = (PageTable)(page_dir_entry.dir_entry.page_table << 12);
+    // uint32_t phy_page= ...; // recherche d'une page libre dans la memoire physique
+    //  uint32_t phy_page = findfreePage(); // recherche d'une page libre dans la memoire physique
+
+    // int idx_pagetab= ...; // calcul de la position de la page dans la table de page
+    int idx_pagetab = (address >> 12) & 0x3FF; // calcul de la position de la page dans la table de page
 
     // mise a jour de l'entree dans la page de table
     setPageEntry(&page_table[idx_pagetab], address, is_writeable, is_kernel);
@@ -104,12 +104,13 @@ PageTable alloc_page_entry(uint32_t address, int is_writeable, int is_kernel ) {
     return page_table;
 }
 
-void enablePaging() {
-    __asm__ __volatile__("mov %0, %%cr3":: "r"(pageDirectory));
+void enablePaging()
+{
+    __asm__ __volatile__("mov %0, %%cr3" ::"r"(pageDirectory));
     uint32_t cr0;
-    __asm__ __volatile__("mov %%cr0, %0": "=r"(cr0));
+    __asm__ __volatile__("mov %%cr0, %0" : "=r"(cr0));
     cr0 |= 0x80000000;
-    __asm__ __volatile__("mov %0, %%cr0":: "r"(cr0));
+    __asm__ __volatile__("mov %0, %%cr0" ::"r"(cr0));
 }
 
 /*
@@ -117,5 +118,3 @@ void loadPageDirectory(unsigned int* dir) {
     __asm__ __volatile__("mov %0, %%cr3":: "r"(dir));
 }
 */
-
-
